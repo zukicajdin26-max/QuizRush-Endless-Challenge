@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Endless Quiz Game</title>
+<style>
+body {
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+  text-align: center;
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+  margin-top: 50px;
+}
+
+button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 15px;
+  background: #1e293b;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #334155;
+}
+
+.correct { background: green; }
+.wrong { background: red; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🔥 Endless Quiz</h1>
+  <p id="score">Score: 0</p>
+  <p id="question"></p>
+  <div id="answers"></div>
+  <p id="timer"></p>
+</div>
+
+<script>
+let score = 0;
+let streak = 0;
+let timeLeft = 10;
+let timer;
+
+const questions = [
+  {q: "Capital of France?", a: ["Paris","Rome","Berlin","Madrid"], c: 0},
+  {q: "5 + 7 = ?", a: ["10","12","14","11"], c: 1},
+  {q: "JS stands for?", a: ["JavaStyle","JavaScript","JustScript","None"], c: 1},
+  {q: "Largest ocean?", a: ["Atlantic","Indian","Pacific","Arctic"], c: 2},
+  {q: "2 * 6 = ?", a: ["10","11","12","13"], c: 2}
+];
+
+function randomQuestion() {
+  return questions[Math.floor(Math.random() * questions.length)];
+}
+
+function loadQuestion() {
+  clearInterval(timer);
+  timeLeft = 10;
+  document.getElementById("timer").innerText = "Time: " + timeLeft;
+
+  let q = randomQuestion();
+  document.getElementById("question").innerText = q.q;
+
+  let answersDiv = document.getElementById("answers");
+  answersDiv.innerHTML = "";
+
+  q.a.forEach((ans, i) => {
+    let btn = document.createElement("button");
+    btn.innerText = ans;
+
+    btn.onclick = () => {
+      if(i === q.c) {
+        score += 10 + streak * 2;
+        streak++;
+        loadQuestion();
+      } else {
+        gameOver();
+      }
+      updateScore();
+    };
+
+    answersDiv.appendChild(btn);
+  });
+
+  timer = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timer").innerText = "Time: " + timeLeft;
+
+    if(timeLeft <= 0) {
+      gameOver();
+    }
+  }, 1000);
+}
+
+function updateScore() {
+  document.getElementById("score").innerText = "Score: " + score;
+}
+
+function gameOver() {
+  clearInterval(timer);
+  alert("Game Over! Score: " + score + "\n\n👉 Here you can show an ad!");
+  score = 0;
+  streak = 0;
+  updateScore();
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
